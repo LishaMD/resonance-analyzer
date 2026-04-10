@@ -175,7 +175,7 @@ Health check — returns service status and supported file formats.
 
 Key decisions made during MVP build, documented for future contributors:
 
-- **Three separate Claude API calls for evidence extraction** (one per force) rather than one merged call — chosen to maximize recall quality per force. Each call has dedicated few-shot examples tuned to that force's evidence patterns. Recall target is ≥90%.
+- **Three separate Claude API calls for evidence extraction** one per force (Execution, Marketing, Revenue). Execution findings are tagged to Product or Operations sub-layers. Revenue findings are tagged to Revenue Architecture, Sales Motion, or Financial Coherence sub-layers. Marketing is a singular diagnostic force with no sub-layers. A seventh Marketing metric — Sales Activation of Marketing Messaging — was added to surface the Marketing to Sales handoff breakdown. Pass 2 explicitly checks the connection between Marketing's Sales Activation findings and Revenue's Sales Motion findings as the most common cross-force breakdown in founder-led organizations. Recall target is ≥90% per force.
 - **Direct injection over RAG for Phase 1** — Claude's 200K context window handles 20+ documents in a single pass. RAG evaluation triggers if cross-force pattern miss rate exceeds 15% across 3+ pilots.
 - **Flask + ngrok for MVP** — Python extraction runs locally on M4 Pro, exposed to n8n Cloud via ngrok tunnel. Migration to Modal.com planned post-pilot when pipeline needs to run without local machine.
 - **Airtable as evidence review UI for MVP** — replaced by custom Lovable interface in Phase 2.
@@ -185,7 +185,7 @@ Key decisions made during MVP build, documented for future contributors:
 
 ## Project Status
 
-Currently in active MVP build. Phase 1 (extraction service) complete. Phase 2 (n8n pipeline + Claude analysis) in progress.
+Currently in active MVP build. Phase 1 (extraction service) complete. Phase 2 in progress — extraction service complete, three force prompts finalized with sub-layer tagging and Sales Motion metrics, wiring into n8n in Session 3.
 
 **Go/No-Go decision** after 5+ paid pilot engagements, evaluating:
 - Evidence recall ≥90%
