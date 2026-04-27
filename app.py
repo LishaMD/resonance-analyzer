@@ -85,6 +85,16 @@ def extract_text_from_xlsx(file_path):
 
     return "\n".join(text)
 
+def extract_text_from_csv(file_path):
+    """Extract text from CSV files."""
+    import csv
+    with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+        reader = csv.reader(f)
+        rows = list(reader)
+    if not rows:
+        return ""
+    lines = [",".join(row) for row in rows if any(cell.strip() for cell in row)]
+    return "\n".join(lines)
 
 def extract_text_from_image(file_path):
     """Extract text from image using Tesseract OCR."""
@@ -102,6 +112,7 @@ def extract_text(file_path, filename):
         '.docx': extract_text_from_docx,
         '.pptx': extract_text_from_pptx,
         '.xlsx': extract_text_from_xlsx,
+        '.csv': extract_text_from_csv,
         '.png': extract_text_from_image,
         '.jpg': extract_text_from_image,
         '.jpeg': extract_text_from_image,
