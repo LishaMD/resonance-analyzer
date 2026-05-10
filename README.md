@@ -1,5 +1,5 @@
 # Resonance Analyzer
-### Consulting Intelligence by Syntara Intelligence
+### Consulting Intelligence by Coherynce
 
 > Compress 3–4 weeks of manual business analysis into 3–5 days.
 
@@ -7,7 +7,7 @@
 
 ## What Is This?
 
-The Resonance Analyzer is a proprietary consulting intelligence tool built for Syntara Intelligence. It ingests a client's strategic and key business documents — pitch decks, roadmaps, financial models, org charts, sales strategies, marketing materials — and runs them through a three-force analytical framework to surface coherence gaps, cross-force patterns, and strategic leverage points.
+The Resonance Analyzer is a proprietary consulting intelligence tool built for Coherynce. It ingests a client's strategic and key business documents — pitch decks, roadmaps, financial models, org charts, sales strategies, marketing materials — and runs them through a three-force analytical framework to surface coherence gaps, cross-force patterns, and strategic leverage points.
 
 The output is a structured evidence set and a draft Resonance Analysis Report, ready for consultant refinement and client delivery.
 
@@ -28,7 +28,7 @@ The Resonance Analyzer makes strategic coherence analysis accessible at $1,500 p
 
 **This tool serves a triple purpose:**
 1. Makes Syntara staff dramatically more efficient as consultants today
-2. Builds the structured data layer that will power Syntara Intelligence's proprietary cross-client pattern intelligence over time
+2. Builds the structured data layer that will power Coherynce's proprietary cross-client pattern intelligence over time
 3. Sets the stage for agents that track these patterns continuously over time with a dashboard view for true coherence across business ecosystems
 
 ---
@@ -352,7 +352,7 @@ Health check — returns service status and supported file formats.
 
 ## License
 
-Proprietary — Syntara Intelligence / The Resonance Field LLC. All rights reserved.
+Proprietary — Coherynce / The Resonance Field LLC. All rights reserved.
 
 ---
 
