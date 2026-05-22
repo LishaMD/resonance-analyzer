@@ -3,6 +3,7 @@ TerraLoop RAG pipeline test — extracts local files directly,
 bypassing Flask/ngrok for local testing.
 """
 
+import requests
 import os
 import sys
 import json
@@ -11,12 +12,12 @@ import uuid
 from pathlib import Path
 from datetime import datetime, timezone
 from dotenv import load_dotenv
+from structured_extractor import extract_structured
 
 load_dotenv()
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from app import extract_text
 from chunker import chunk_documents
 from embedder import embed_chunks, clear_engagement_chunks
 from retriever import retrieve_for_force, retrieve_for_pass2
@@ -31,7 +32,7 @@ from orchestrator import (
 )
 
 DOCS_FOLDER = "/Users/elishadavison/Desktop/resonance-analyzer/TerraLoop Documents"
-CLIENT_ID = str(uuid.uuid4())
+CLIENT_ID = os.getenv("TEST_CLIENT_ID") or str(uuid.uuid4())
 
 CLIENT_CONTEXT = {
     "company_name": "TerraLoop",
@@ -44,19 +45,56 @@ CLIENT_CONTEXT = {
 
 
 def extract_local_files(folder_path: str) -> list:
+    """Upload local files to Modal extraction service."""
+    import base64
     supported = {".pdf", ".docx", ".pptx", ".xlsx", ".csv", ".png", ".jpg", ".jpeg"}
     folder = Path(folder_path)
+    modal_url = os.getenv("MODAL_URL")
     extracted = []
+
     for f in sorted(folder.iterdir()):
         if f.suffix.lower() not in supported:
             continue
         print(f"  Extracting: {f.name}")
+
+        # Route xlsx and csv through structured extractor locally
+        if f.suffix.lower() in ('.xlsx', '.xls', '.csv'):
+            try:
+                structured_chunks = extract_structured(str(f), f.name)
+                for chunk in structured_chunks:
+                    extracted.append({
+                        "filename": chunk["filename"],
+                        "extracted_text": chunk["extracted_text"],
+                        "tab_name": chunk.get("tab_name", ""),
+                        "doc_type_override": chunk.get("doc_type_override", "")
+                    })
+            except Exception as e:
+                print(f"  ERROR extracting {f.name}: {e}")
+            continue
+
+        # Send other files to Modal
         try:
-            text = extract_text(str(f), f.name)
-            extracted.append({"filename": f.name, "extracted_text": text or ""})
+            with open(f, "rb") as fh:
+                file_bytes = fh.read()
+            b64 = base64.b64encode(file_bytes).decode("utf-8")
+
+            response = requests.post(
+                modal_url,
+                json={"files": [{"filename": f.name, "content_b64": b64}]},
+                timeout=120
+            )
+            response.raise_for_status()
+            result = response.json()
+            files = result.get("files", [])
+            if files:
+                extracted.append({
+                    "filename": files[0].get("filename", f.name),
+                    "extracted_text": files[0].get("extracted_text", "")
+                })
         except Exception as e:
             print(f"  ERROR extracting {f.name}: {e}")
             extracted.append({"filename": f.name, "extracted_text": "", "error": str(e)})
+
     return extracted
 
 

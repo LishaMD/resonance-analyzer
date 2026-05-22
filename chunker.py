@@ -17,6 +17,20 @@ def chunk_documents(extracted_files: list[dict]) -> list[dict]:
     for file in extracted_files:
         filename = file.get("filename", "unknown")
         text = file.get("extracted_text", "")
+        doc_type_override = file.get("doc_type_override", "")
+
+        # Pre-interpreted structured chunks pass through as-is
+        if doc_type_override in ("spreadsheet", "crm") and file.get("tab_name"):
+            chunk = make_chunk(
+                text=text,
+                filename=filename,
+                doc_type=doc_type_override,
+                structural_location=file.get("tab_name", "structured")
+            )
+            if chunk:
+                all_chunks.append(chunk)
+                print(f"  [chunker] {filename} [{file.get('tab_name')}] → 1 structured chunk")
+            continue
 
         if not text or not text.strip():
             print(f"  [chunker] Skipping {filename} — no extracted text")
@@ -38,8 +52,10 @@ def chunk_documents(extracted_files: list[dict]) -> list[dict]:
         print(f"  [chunker] {filename} → {len(chunks)} chunks")
 
     print(f"[chunker] Total chunks produced: {len(all_chunks)}")
-     # Tag chunks with relevant metrics from the knowledge graph
+
+    # Tag chunks with relevant metrics from the knowledge graph
     all_chunks = tag_chunks_with_metrics(all_chunks)
+
     return all_chunks
 
 
